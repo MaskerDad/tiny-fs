@@ -143,7 +143,22 @@ RBE
   - [ ] 通过 `create` 方法可以在块设备上创建并初始化一个 tiny-fs；
   - [ ] 通过 `open` 方法可以从一个已写入了 tiny-fs 镜像的块设备上打开 tiny-fs； 
 
-- [ ] `INode (vfs)`
+- [ ] `INode (vfs)`：`DiskInode` 放在磁盘块中比较固定的位置，而 `Inode` 是放在内存中的记录文件索引节点信息的数据结构。
+
+  - [ ] `INode` 的相关操作需要通过  `DiskManager` 访问底层的 `DiskINode`，进而获取到真正的数据；
+  - [ ] 设计两个方法 `read_disk_inode/modify_disk_inode` 简化对于 `INode` 对应的磁盘上 `DiskInode` 的访问流程；
+  - [ ] 获取根目录的 `INode`
+  - [ ] 文件索引
+
+  ---
+
+  //TODO
+
+  - [ ] 文件列举
+  - [ ] 文件创建
+  - [ ] 文件清空
+  - [ ] 文件读写
+
 
 
 
