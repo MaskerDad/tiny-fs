@@ -99,7 +99,7 @@ tiny-fs文件系统中管理这些磁盘数据的控制逻辑主要集中在 **�
 
 > BlockCache的读入/写回时机
 
-块缓存 `BlockCache` 相当于磁盘在内存中的一份快照，`BlockCache` 读入/写回磁盘的操作通过磁盘设备驱动完成，考虑到磁盘IO的性能损耗在tiny-fs 设计中这两个操作是相当低频的：
+块缓存 `BlockCache` 相当于磁盘在内存中的一份快照，`BlockCache` 读入/写回磁盘的操作通过磁盘设备驱动完成，考虑到磁盘IO的性能损耗，在tiny-fs 设计中这两个操作应当比较低频：
 
 * `read_in`：用户通过 `Inode` 读数据时，如果 `BlockCacheManager` 找不到对应block_id，则从磁盘中拉取一次数据并新建 `BlockCache`，后续将直接对该 `BlockCache` 操作；
 * `write_back`：
@@ -184,7 +184,7 @@ RBE
 
 ---
 
-- [ ] `BlockDevice`
+- [x] `BlockDevice`
 
   在 `tiny-fs` 库的最底层声明了一个块设备的抽象接口 `BlockDevice`，其包含两个方法 `read_block/write_block` 
 
