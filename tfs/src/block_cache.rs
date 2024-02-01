@@ -1,3 +1,4 @@
+//! BlockCache/BlockCacheManager
 use crate::block_dev;
 
 use super::{BlockDevice, BLOCK_SZ};

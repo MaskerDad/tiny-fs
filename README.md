@@ -188,36 +188,36 @@ RBE
 
   在 `tiny-fs` 库的最底层声明了一个块设备的抽象接口 `BlockDevice`，其包含两个方法 `read_block/write_block` 
 
-- [ ] `BlockCache`
+- [x] `BlockCache`
 
-  - [ ] `struct BlockCache`：由于操作系统频繁读写速度缓慢的磁盘块会极大降低系统性能，因此常见的手段是先将一个块上的数据从磁盘读到内存中的一个缓冲区中；
-    - [ ] 创建一个 `BlockCache` 的时候，这将触发一次 `read_block` 将一个块上的数据从磁盘读到缓冲区；
-    - [ ] `BlockCache` 的设计也体现了 RAII 思想， 它管理着一个缓冲区的生命周期。当 `BlockCache` 的生命周期结束之后缓冲区也会被从内存中回收，这个时候 `modified` 标记将会决定数据是否需要写回磁盘；
-    - [ ] `BlockCache::read/modify` 让上层操作块缓存更加方便；
-  - [ ] `struct BlockCacheManager`：为了避免在块缓存上浪费过多内存，我们希望内存中同时只能驻留有限个磁盘块的缓冲区。
-    - [ ] `get_block_cache` 方法尝试从块缓存管理器中获取一个编号为 `block_id` 的块的块缓存，如果找不到，会从磁盘读取到内存中，还有可能会发生缓存替换；
-    - [ ] 创建 `BlockCacheManager` 的全局实例；
+  - [x] `struct BlockCache`：由于操作系统频繁读写速度缓慢的磁盘块会极大降低系统性能，因此常见的手段是先将一个块上的数据从磁盘读到内存中的一个缓冲区中；
+    - [x] 创建一个 `BlockCache` 的时候，这将触发一次 `read_block` 将一个块上的数据从磁盘读到缓冲区；
+    - [x] `BlockCache` 的设计也体现了 RAII 思想， 它管理着一个缓冲区的生命周期。当 `BlockCache` 的生命周期结束之后缓冲区也会被从内存中回收，这个时候 `modified` 标记将会决定数据是否需要写回磁盘；
+    - [x] `BlockCache::read/modify` 让上层操作块缓存更加方便；
+  - [x] `struct BlockCacheManager`：为了避免在块缓存上浪费过多内存，我们希望内存中同时只能驻留有限个磁盘块的缓冲区。
+    - [x] `get_block_cache` 方法尝试从块缓存管理器中获取一个编号为 `block_id` 的块的块缓存，如果找不到，会从磁盘读取到内存中，还有可能会发生缓存替换；
+    - [x] 创建 `BlockCacheManager` 的全局实例；
 
-- [ ] `DiskLayout`
+- [x] `DiskLayout`
 
-  - [ ] `SuperBlock`：存放在磁盘上编号为 0 的块的起始处
-    - [ ] `initialize` 创建一个 tiny-fs 时对超级块进行初始化；
-    - [ ] `is_valid` 通过魔数判断超级块所在的文件系统是否合法；
-  - [ ] `Inode/Data_BitMap`
-    - [ ] 位图 `Bitmap` 中仅保存了它所在区域的起始块编号以及区域的长度为多少个块；
-    - [ ]  `Bitmap::alloc/dealloc` 通过置位/清零 bit 来分配/回收磁盘块 => 返回全局bit
-  - [ ] `Inode`
-    - [ ] 每个文件/目录在磁盘上均以一个 `DiskInode` 的形式存储；
-    - [ ] 索引方式分成直接索引和间接索引两种；
-    - [ ] `get_block_id` 可以从索引中查到它自身用于保存文件内容的第 `block_id` 个数据块的块编号 => 返回全局块ID
-    - [ ] 在对文件/目录初始化之后，它的 `size` 均为 0 ，需要通过 `increase_size` 方法逐步扩充容量。
-      - [ ] `block_num_needed` 确定在容量扩充的时候额外需要多少块；
-      - [ ] `increase_size` 接收两个参数，其中 `new_size` 表示容量扩充之后的文件大小， `new_blocks` 是一个保存了本次容量扩充所需块编号的向量，这些块都是由上层的磁盘块管理器负责分配的；
-    - [ ] 通过 `clear_size` 方法实现清空文件的内容并回收所有数据和索引块，将回收的所有块的编号保存在一个向量中返回给磁盘块管理器；
-    - [ ] `DiskInode::read_at/write_at` 来读写它索引的那些数据块中的数据；
-  - [ ] `Data/DirEntry`
-    - [ ] 作为一个文件而言，每个保存内容的数据块都只是一个字节数组 `[u8; BLOCK_SZ]`；
-    - [ ] 目录项是一个二元组，包括两个元素：文件名/子目录名以及文件（或子目录）所在的索引节点编号；
+  - [x] `SuperBlock`：存放在磁盘上编号为 0 的块的起始处
+    - [x] `initialize` 创建一个 tiny-fs 时对超级块进行初始化；
+    - [x] `is_valid` 通过魔数判断超级块所在的文件系统是否合法；
+  - [x] `Inode/Data_BitMap`
+    - [x] 位图 `Bitmap` 中仅保存了它所在区域的起始块编号以及区域的长度为多少个块；
+    - [x]  `Bitmap::alloc/dealloc` 通过置位/清零 bit 来分配/回收磁盘块 => 返回全局bit
+  - [x] `Inode`
+    - [x] 每个文件/目录在磁盘上均以一个 `DiskInode` 的形式存储；
+    - [x] 索引方式分成直接索引和间接索引两种；
+    - [x] `get_block_id` 可以从索引中查到它自身用于保存文件内容的第 `block_id` 个数据块的块编号 => 返回全局块ID
+    - [x] 在对文件/目录初始化之后，它的 `size` 均为 0 ，需要通过 `increase_size` 方法逐步扩充容量。
+      - [x] `block_num_needed` 确定在容量扩充的时候额外需要多少块；
+      - [x] `increase_size` 接收两个参数，其中 `new_size` 表示容量扩充之后的文件大小， `new_blocks` 是一个保存了本次容量扩充所需块编号的向量，这些块都是由上层的磁盘块管理器负责分配的；
+    - [x] 通过 `clear_size` 方法实现清空文件的内容并回收所有数据和索引块，将回收的所有块的编号保存在一个向量中返回给磁盘块管理器；
+    - [x] `DiskInode::read_at/write_at` 来读写它索引的那些数据块中的数据；
+  - [x] `Data/DirEntry`
+    - [x] 作为一个文件而言，每个保存内容的数据块都只是一个字节数组 `[u8; BLOCK_SZ]`；
+    - [x] 目录项是一个二元组，包括两个元素：文件名/子目录名以及文件（或子目录）所在的索引节点编号；
 
 - [ ] `DiskManager (pfs)`
 
