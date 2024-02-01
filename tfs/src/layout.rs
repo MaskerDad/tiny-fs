@@ -5,7 +5,6 @@ use super::{BlockDevice, BLOCK_SZ, get_block_cache};
 use alloc::vec::Vec;
 use alloc::sync::Arc;
 use core::fmt::{Debug, Formatter, Result};
-use std::intrinsics::saturating_add;
 
 /* Some constants */
 // Magic number for sanity check
@@ -83,16 +82,17 @@ type DataBlock = [u8; BLOCK_SZ];
 
 #[repr(C)]
 pub struct DiskInode {
-    // file size
+    //file size
     pub size: u32,
-    
+    //index
     pub direct: [u32; INODE_DIRECT_COUNT],
     pub indirect1: u32,
     pub indirecr2: u32,
+    //disk_inode type
     type_: DiskInodeType,
 }
 
-/** Some core methods */
+/* Some core methods */
 impl DiskInode {
     pub fn initialize(&mut self, type_: DiskInodeType) {
         self.size = 0;
@@ -101,10 +101,45 @@ impl DiskInode {
         self.indirecr2 = 0;
         self.type_ = type_;
     }
-    //TODO
+    ///Increase the size of current disk_inode
+    pub fn increase_size(
+        &mut self,
+        new_size: u32,
+        new_blocks: Vec<u32>,
+        block_device: &Arc<dyn BlockDevice>
+    ) {
+        
+    }
+    ///Clear size to zero and return blocks that should be deallocated
+    ///We will clear the block contents to zero later
+    pub fn  clear_size(&mut self, block_device: &Arc<dyn BlockDevice>)
+        -> Vec<u32>
+    {
+        
+    }
+    ///Read data from current disk_inode
+    pub fn read_at(
+        &self,
+        offset: usize,
+        buf: &mut [u8],
+        block_device: &Arc<dyn BlockDevice>,
+    ) -> usize {
+        
+    }
+    ///Write data into current disk_inode
+    ///Size must be adjusted properly before call `write_at`
+    pub fn write_at(
+        &mut self,
+        offset: usize,
+        buf: &[u8],
+        block_device: &Arc<dyn BlockDevice>,
+    ) -> usize {
+        
+    }
+
 }
 
-/** Some helper methods  */
+/* Some helper methods  */
 impl DiskInode {
     pub fn is_dir(&self) -> bool {
         self.type_ == DiskInodeType::Directory
