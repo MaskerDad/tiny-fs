@@ -1,3 +1,5 @@
+use crate::block_dev;
+
 use super::{BlockDevice, BLOCK_SZ, get_block_cache};
 
 use alloc::vec::Vec;
@@ -90,6 +92,7 @@ pub struct DiskInode {
     type_: DiskInodeType,
 }
 
+/** Some core methods */
 impl DiskInode {
     pub fn initialize(&mut self, type_: DiskInodeType) {
         self.size = 0;
@@ -98,18 +101,86 @@ impl DiskInode {
         self.indirecr2 = 0;
         self.type_ = type_;
     }
-
-    pub fn is_dir(&self) -> bool {
-        self.type_ == DiskInodeType::Directory
-    }
-
-    pub fn is_file(&self) -> bool {
-        self.type_ == DiskInodeType::File
-    }
-
     //TODO
 }
 
+/** Some helper methods  */
+impl DiskInode {
+    pub fn is_dir(&self) -> bool {
+        self.type_ == DiskInodeType::Directory
+    }
+    pub fn is_file(&self) -> bool {
+        self.type_ == DiskInodeType::File
+    }
+    /// Get real global_id on block device by inner DiskInode_id
+    pub fn get_block_id(&self, inner_id: u32, block_device: &Arc<dyn BlockDevice>) -> u32 {
+        let inner_id = inner_id as usize;
+        if inner_id < INODE_DIRECT_COUNT {
+            self.direct[inner_id]
+        } else if inner_id < INDIRECT1_BOUND {
+            get_block_cache(
+                self.indirect1 as usize,
+                Arc::clone(block_device)
+            )
+            .lock().read(0, |indirect_block: &IndirectBlock| {
+                indirect_block[inner_id - INODE_DIRECT_COUNT]
+            })
+        } else {
+            // this is inner_id for indirect2
+            let indirect2_inner_id = inner_id - INDIRECT1_BOUND;
+            // find the first-level index block in which the block_id is located
+            let indirect1 = get_block_cache(
+                self.indirecr2 as usize,
+                Arc::clone(block_device)
+            )
+            .lock().read(0, |indirect2_block: &IndirectBlock| {
+                indirect2_block[indirect2_inner_id / INODE_INDIRECT1_COUNT]
+            });
+            // the block_id is found by means of a first-level index block combined with an offset
+            get_block_cache(
+                indirect1 as usize,
+                Arc::clone(block_device)
+            )
+            .lock().read(0, |indirect1_block: &IndirectBlock| {
+                indirect1_block[indirect2_inner_id % INODE_INDIRECT1_COUNT]
+            })
+        }
+    }
+    /*
+        The following methods is used to determine how many additional blocks
+        are needed when capacity is expanded.
+
+        Possible chains of function calls:
+        [(vfs)Inode::write_at(offset, buf)]
+                +-> [(vfs)Inode::increase_size]
+                        +-> [DiskInode::block_num_needed]
+                                +-> [DiskInode::increase_size] 
+    */
+    fn _data_blocks(size: u32) -> u32 {
+        (size + BLOCK_SZ as u32 - 1) / BLOCK_SZ as u32
+    }
+    pub fn data_blocks(&self) -> u32 {
+        Self::_data_blocks(self.size)
+    }
+    pub fn total_blocks(size: u32) -> u32 {
+        let data_blocks = Self::_data_blocks(size) as usize;
+        let mut total = data_blocks as usize;
+        //indirect1
+        if data_blocks > INODE_DIRECT_COUNT {
+            total += 1;
+        }
+        //indirect2
+        if data_blocks > INDIRECT1_BOUND {
+            total += 1;
+            total += (data_blocks - INDIRECT1_BOUND + INODE_INDIRECT1_COUNT - 1) / INODE_INDIRECT1_COUNT;
+        }
+        data_blocks as u32
+    }
+    pub fn blocks_num_needed(&self, new_size: u32) -> u32 {
+        assert!(new_size >= self.size);
+        Self::total_blocks(new_size) - Self::total_blocks(self.size)
+    }
+}
 
 /** 
     [DirEntry_Description]:
@@ -160,4 +231,3 @@ impl DirEntry {
         }
     }
 }
-
