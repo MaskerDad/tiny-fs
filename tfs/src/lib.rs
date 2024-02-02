@@ -13,6 +13,7 @@ extern crate alloc;
 
 pub use block_dev::BlockDevice;
 pub use tfs::TinyFileSystem;
+pub use vfs::Inode;
 use block_cache::{get_block_cache, block_cache_sync_all};
 use bitmap::Bitmap;
 use layout::*;

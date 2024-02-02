@@ -1,6 +1,4 @@
 //! SuperBlock/DiskInode/DirEntry
-use crate::block_dev;
-
 use super::{BlockDevice, BLOCK_SZ, get_block_cache};
 
 use alloc::vec::Vec;
@@ -19,7 +17,7 @@ const INDIRECT1_BOUND: usize = DIRECT_BOUND + INODE_INDIRECT1_COUNT;
 const INDIRECT2_BOUND: usize = INDIRECT1_BOUND + INODE_INDIRECT2_COUNT;
 // The max length of dir_entry name
 const NAME_LENGTH_LIMIT: usize = 27;
-const DIR_ENTRY_SZ: usize = 32; // 27 + 1 + 4
+pub const DIR_ENTRY_SZ: usize = 32; // 27 + 1 + 4
 
 /**
     [SuperBlock_Description]:

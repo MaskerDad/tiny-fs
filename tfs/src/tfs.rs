@@ -5,6 +5,7 @@
 use super::{
     block_cache_sync_all, get_block_cache,
     SuperBlock, Bitmap, DiskInode, DiskInodeType,
+    Inode,
     BlockDevice,
     BLOCK_SZ,
 };
@@ -92,6 +93,7 @@ impl TinyFileSystem {
             disk_inode.initialize(DiskInodeType::Directory); 
         });
         //return tfs
+        block_cache_sync_all();
         Arc::new(Mutex::new(tfs))
     }
     ///Open a block device as a filesystem
@@ -126,7 +128,13 @@ impl TinyFileSystem {
     }
     ///Get the root_inode of the filesystem(is not DiskInode and return Inode)
     pub fn root_inode(tfs: &Arc<Mutex<Self>>) -> Inode {
-        
+        let (block_id, offset) = tfs.lock().get_disk_inode_pos(0);
+        Inode::new(
+            block_id,
+            offset,
+            Arc::clone(tfs),
+            Arc::clone(&tfs.lock().block_device),
+        )
     }
 }
 
