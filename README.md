@@ -223,11 +223,11 @@ RBE
     - [x] 作为一个文件而言，每个保存内容的数据块都只是一个字节数组 `[u8; BLOCK_SZ]`；
     - [x] 目录项是一个二元组，包括两个元素：文件名/子目录名以及文件（或子目录）所在的索引节点编号；
 
-- [ ] `DiskManager (pfs)`
+- [x] `TinyFileSystem (tfs)`
 
-  - [ ] `EasyFileSystem` 包含两个位图 `inode_bitmap` 和 `data_bitmap` ，还记录下索引节点区域和数据块区域起始块编号 `inode_area_start_block/data_area_start_block`；
-  - [ ] 通过 `create` 方法可以在块设备上创建并初始化一个 tiny-fs；
-  - [ ] 通过 `open` 方法可以从一个已写入了 tiny-fs 镜像的块设备上打开 tiny-fs； 
+  - [x] `TinyFileSystem` 包含两个位图 `inode_bitmap` 和 `data_bitmap` ，还记录下索引节点区域和数据块区域起始块编号 `inode_area_start_block/data_area_start_block`；
+  - [x] 通过 `create` 方法可以在块设备上创建并初始化一个 tiny-fs；
+  - [x] 通过 `open` 方法可以从一个已写入了 tiny-fs 镜像的块设备上打开 tiny-fs； 
 
 - [ ] `INode (vfs)`：`DiskInode` 放在磁盘块中比较固定的位置，而 `Inode` 是放在内存中的记录文件索引节点信息的数据结构。
 
