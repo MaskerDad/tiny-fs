@@ -11,6 +11,8 @@ use super::{
 
 use alloc::sync::Arc;
 use spin::Mutex;
+
+type DataBlock = [u8; BLOCK_SZ];
 ///An tiny filesystem on block
 pub struct TinyFileSystem {
     ///Real device that implemented BlockDevice
@@ -40,15 +42,25 @@ impl TinyFileSystem {
     }
     ///Allocate a new inode
     pub fn alloc_inode(&mut self) -> u32 {
-        
+        self.inode_bitmap.alloc(&self.block_device).unwrap() as u32
     }
     ///Allocate a data block
     pub fn alloc_data(&mut self) -> u32 {
-        
+        self.data_bitmap.alloc(&self.block_device).unwrap() as u32
     }
     ///Deallocate a data block
     pub fn dealloc_data(&mut self, block_id: u32) {
-        
+        get_block_cache(block_id as usize, Arc::clone(&self.block_device))
+            .lock()
+            .modify(0, |data_block: &mut DataBlock| {
+                data_block.iter_mut().for_each(|p| {
+                    *p = 0;
+                })
+            });
+        self.data_bitmap.dealloc(
+            &self.block_device,
+            (block_id - self.data_area_start_block) as usize
+        );
     }
     ///Get the root inode of the filesystem
     pub fn root_inode(tfs: &Arc<Mutex<Self>>) -> Inode {
