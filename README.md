@@ -175,6 +175,10 @@ impl Bitmap {
 * 目录项
 * 间接索引块
 
+## DiskInode扩容流程
+
+![](C:/Users/26896/Desktop/repo_sync/new_repo/os-notes/IMG/tinyfs-tiny-fs%E6%89%A9%E5%AE%B9.drawio.png)
+
 # step-by-step
 
 RBE
