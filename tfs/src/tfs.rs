@@ -46,7 +46,7 @@ impl TinyFileSystem {
     }
     ///Allocate a data block
     pub fn alloc_data(&mut self) -> u32 {
-        self.data_bitmap.alloc(&self.block_device).unwrap() as u32
+        self.data_bitmap.alloc(&self.block_device).unwrap() as u32 + self.data_area_start_block
     }
     ///Deallocate a data block
     pub fn dealloc_data(&mut self, block_id: u32) {
