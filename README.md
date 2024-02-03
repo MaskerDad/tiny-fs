@@ -229,22 +229,22 @@ RBE
   - [x] 通过 `create` 方法可以在块设备上创建并初始化一个 tiny-fs；
   - [x] 通过 `open` 方法可以从一个已写入了 tiny-fs 镜像的块设备上打开 tiny-fs； 
 
-- [ ] `INode (vfs)`：`DiskInode` 放在磁盘块中比较固定的位置，而 `Inode` 是放在内存中的记录文件索引节点信息的数据结构。
+- [x] `INode (vfs)`：`DiskInode` 放在磁盘块中比较固定的位置，而 `Inode` 是放在内存中的记录文件索引节点信息的数据结构。
 
-  - [ ] `INode` 的相关操作需要通过  `DiskManager` 访问底层的 `DiskINode`，进而获取到真正的数据；
-  - [ ] 设计两个方法 `read_disk_inode/modify_disk_inode` 简化对于 `INode` 对应的磁盘上 `DiskInode` 的访问流程；
-  - [ ] 获取根目录的 `INode`
-  - [ ] 根目录 `INode` 专用方法：
+  - [x] `INode` 的相关操作需要通过  `DiskManager` 访问底层的 `DiskINode`，进而获取到真正的数据；
+  - [x] 设计两个方法 `read_disk_inode/modify_disk_inode` 简化对于 `INode` 对应的磁盘上 `DiskInode` 的访问流程；
+  - [x] 获取根目录的 `INode`
+  - [x] 根目录 `INode` 专用方法：
 
-    - [ ] 文件索引 ：`find_inode_id/find`，找到并创建文件名对应的 inode
+    - [x] 文件索引 ：`find_inode_id/find`，找到并创建文件名对应的 inode
 
-    - [ ] 文件列举：`ls`，收集根目录下的所有文件的文件名并以向量的形式返回
+    - [x] 文件列举：`ls`，收集根目录下的所有文件的文件名并以向量的形式返回
 
-    - [ ] 文件创建：`create`，在根目录下创建一个文件 inode
+    - [x] 文件创建：`create`，在根目录下创建一个文件 inode
   
-    - [ ] 文件清空：`clear`，在以某些标志位打开文件（例如带有 *CREATE* 标志打开一个已经存在的文件）的时候，需要首先将文件清空
+    - [x] 文件清空：`clear`，在以某些标志位打开文件（例如带有 *CREATE* 标志打开一个已经存在的文件）的时候，需要首先将文件清空
   
-    - [ ] 文件读写：`read_at/write_at`，从根目录索引到一个文件之后，可以对它进行读写
+    - [x] 文件读写：`read_at/write_at`，从根目录索引到一个文件之后，可以对它进行读写
   
 
 
