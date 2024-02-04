@@ -1,0 +1,10 @@
+C:\Users\26896\Desktop\repo_sync\new_repo\tiny-fs\tfs-test\target\debug\deps\rand_core-28b70fa74c80d518.rmeta: E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\lib.rs E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\block.rs E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\error.rs E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\impls.rs E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\le.rs E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\os.rs
+
+C:\Users\26896\Desktop\repo_sync\new_repo\tiny-fs\tfs-test\target\debug\deps\rand_core-28b70fa74c80d518.d: E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\lib.rs E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\block.rs E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\error.rs E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\impls.rs E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\le.rs E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\os.rs
+
+E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\lib.rs:
+E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\block.rs:
+E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\error.rs:
+E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\impls.rs:
+E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\le.rs:
+E:\ProgramFiles\Rust\cargo\registry\src\index.crates.io-6f17d22bba15001f\rand_core-0.6.4\src\os.rs:

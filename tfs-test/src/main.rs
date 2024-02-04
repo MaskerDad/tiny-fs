@@ -89,5 +89,70 @@ fn tiny_fs_pack() -> std::io::Result<()> {
 
 #[test]
 fn tiny_fs_test() -> std::io::Result<()> {
-       
+    let block_file = Arc::new(BlockFile(Mutex::new(
+        {
+            let f = OpenOptions::new()
+                .read(true)
+                .write(true)
+                .create(true)
+                .open("target/fs.img")?;
+            f.set_len(8192 * 512).unwrap();
+            f
+        }
+    )));
+    //TinyFileSystem::create(block_file.clone(), 4096, 1);
+    let tfs = TinyFileSystem::open(block_file.clone());
+    let root_inode = TinyFileSystem::root_inode(&tfs);
+    //create file test
+    root_inode.create("file_a");
+    root_inode.create("file_b");
+    for name in root_inode.ls() {
+        println!("{}", name);
+    }
+    //write file test
+    let test_str = "hello, tiny-fs!";
+    let file_a = root_inode.find("file_a").unwrap();
+    file_a.write_at(0, test_str.as_bytes());
+    let mut buf = [0u8; 512];
+    let len = file_a.read_at(0, &mut buf);
+    assert_eq!(test_str, core::str::from_utf8(&bufs[..len]).unwrap());
+    
+    //random string test
+    let mut random_str_test = |len: usize| {
+        use rand;
+        
+        file_a.clear();
+        assert_eq!(file_a.read_at(0, &mut buf), 0);
+        let mut str_random = String::new();
+        //create a random string and write into the file_a
+        for _ in 0..len {
+            str_random.push(char::from('0' as u8 + rand::random::<u8>() % 10));
+        }
+        file_a.write_at(0, str_random.as_bytes());
+        //file_a read test
+        let mut read_str = String::new();
+        //read one part at a time
+        let mut read_buf = [0u8; 10];
+        let mut offset = 0usize;
+        loop {
+            let len = file_a.read_at(offset, &mut read_buf);
+            if len == 0 {
+                break;
+            }
+            offset += len;
+            read_str.push(core::str::from_utf8(&read_buf[..len]).unwrap());
+        }
+        assert_eq!(str_random, read_str);
+    };
+    
+    random_str_test(4 * BLOCK_SZ);
+    random_str_test(8 * BLOCK_SZ + BLOCK_SZ / 2);
+    random_str_test(100 * BLOCK_SZ);
+    random_str_test(70 * BLOCK_SZ + BLOCK_SZ / 7);
+    random_str_test((12 + 128) * BLOCK_SZ);
+    random_str_test(400 * BLOCK_SZ);
+    random_str_test(1000 * BLOCK_SZ);
+    random_str_test(2000 * BLOCK_SZ);
+    
+    Ok(())
 }
