@@ -263,7 +263,7 @@ impl DiskInode {
             current_block_end_size = current_block_end_size.min(end);
             //read and update read_size
             let current_block_read_size = current_block_end_size - start;
-            let dst = &mut buf[read_size..read_size + current_block_end_size];
+            let dst = &mut buf[read_size..read_size + current_block_read_size];
             get_block_cache(
                 self.get_block_id(start_block as u32, block_device) as usize,
                 Arc::clone(block_device)
@@ -273,7 +273,7 @@ impl DiskInode {
                 let src = &data_block[start % BLOCK_SZ..start % BLOCK_SZ + current_block_read_size];
                 dst.copy_from_slice(src);
             });
-            read_size += current_block_end_size;
+            read_size += current_block_read_size;
             //move to next block
             if current_block_end_size == end {
                 break;
@@ -395,7 +395,7 @@ impl DiskInode {
             total += 1;
             total += (data_blocks - INDIRECT1_BOUND + INODE_INDIRECT1_COUNT - 1) / INODE_INDIRECT1_COUNT;
         }
-        data_blocks as u32
+        total as u32
     }
     pub fn blocks_num_needed(&self, new_size: u32) -> u32 {
         assert!(new_size >= self.size);

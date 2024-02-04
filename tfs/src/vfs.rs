@@ -38,7 +38,7 @@ impl Inode {
         if self.read_disk_inode(|root_inode: &DiskInode| {
             assert!(root_inode.is_dir());
             //has the file been created?
-            self.find_inode_id(name, disk_inode)
+            self.find_inode_id(name, root_inode)
         }).is_some() {
             //no new inode need be created
             return None;
@@ -140,11 +140,12 @@ impl Inode {
     pub fn clear(&self) {
         let mut fs = self.fs.lock();
         self.modify_disk_inode(|disk_inode| {
+            let size =disk_inode.size;
             let data_blocks_dealloc = disk_inode.clear_size(&self.block_device);
             //dealloc_blocks_num == disk_inode.total_blocks?
             assert!(
                 data_blocks_dealloc.len() ==
-                DiskInode::total_blocks(disk_inode.size) as usize
+                DiskInode::total_blocks(size) as usize
             );
             for block_id in data_blocks_dealloc.into_iter() {
                 fs.dealloc_data(block_id);

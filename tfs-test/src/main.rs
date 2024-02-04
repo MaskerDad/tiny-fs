@@ -2,7 +2,6 @@
 use tiny_fs::{BlockDevice, TinyFileSystem, BLOCK_SZ};
 
 use clap::{App, Arg};
-use core::slice::SlicePattern;
 use std::fs::{read_dir, File, OpenOptions};
 use std::io::{Read, Write, Seek, SeekFrom};
 use std::sync::Arc;
@@ -13,7 +12,7 @@ struct BlockFile(Mutex<File>);
 impl BlockDevice for BlockFile {
     fn read_block(&self, block_id: usize, buf: &mut [u8]) {
         let mut file = self.0.lock().unwrap();
-        file.seek(SeekFrom::start((block_id * BLOCK_SZ) as u64))
+        file.seek(SeekFrom::Start((block_id * BLOCK_SZ) as u64))
             .expect("Error when seeking!");
         assert_eq!(file.read(buf).unwrap(), BLOCK_SZ, "Not a complete block!");
     }
@@ -77,12 +76,15 @@ fn tiny_fs_pack() -> std::io::Result<()> {
         .collect();
     for name in apps_name {
         //load app data from host file system
-        let mut host_file = File::open(format!("{}{}", target_path, app)).unwrap();
+        let mut host_file = File::open(format!("{}{}", target_path, name)).unwrap();
         let mut app_data: Vec<u8> = Vec::new();
         host_file.read_to_end(&mut app_data).unwrap();
         //create file inode in tiny-fs
         let new_inode = root_inode.create(name.as_str()).unwrap();
         new_inode.write_at(0, app_data.as_slice());
+    }
+    for app_name in root_inode.ls() {
+        println!("{}", app_name);
     }
     Ok(())  
 }
@@ -100,7 +102,7 @@ fn tiny_fs_test() -> std::io::Result<()> {
             f
         }
     )));
-    //TinyFileSystem::create(block_file.clone(), 4096, 1);
+    TinyFileSystem::create(block_file.clone(), 4096, 1);
     let tfs = TinyFileSystem::open(block_file.clone());
     let root_inode = TinyFileSystem::root_inode(&tfs);
     //create file test
@@ -113,9 +115,10 @@ fn tiny_fs_test() -> std::io::Result<()> {
     let test_str = "hello, tiny-fs!";
     let file_a = root_inode.find("file_a").unwrap();
     file_a.write_at(0, test_str.as_bytes());
-    let mut buf = [0u8; 512];
+    //let mut buf = [0u8; 512];
+    let mut buf = [0u8; 233];
     let len = file_a.read_at(0, &mut buf);
-    assert_eq!(test_str, core::str::from_utf8(&bufs[..len]).unwrap());
+    assert_eq!(test_str, core::str::from_utf8(&buf[..len]).unwrap());
     
     //random string test
     let mut random_str_test = |len: usize| {
@@ -132,7 +135,7 @@ fn tiny_fs_test() -> std::io::Result<()> {
         //file_a read test
         let mut read_str = String::new();
         //read one part at a time
-        let mut read_buf = [0u8; 10];
+        let mut read_buf = [0u8; 127];
         let mut offset = 0usize;
         loop {
             let len = file_a.read_at(offset, &mut read_buf);
@@ -140,7 +143,7 @@ fn tiny_fs_test() -> std::io::Result<()> {
                 break;
             }
             offset += len;
-            read_str.push(core::str::from_utf8(&read_buf[..len]).unwrap());
+            read_str.push_str(core::str::from_utf8(&read_buf[..len]).unwrap());
         }
         assert_eq!(str_random, read_str);
     };
